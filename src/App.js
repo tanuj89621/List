@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import ItemList from './components/Listing';
+import ItemDetails from './components/Details';
+import { fetchItems } from './controllers/ListingController';
 
-function App() {
+const App = () => {
+  const [items, setItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+    const loadItems = async () => {
+      const itemsData = await fetchItems();
+      console.log(itemsData)
+
+      setItems(itemsData);
+    };
+    loadItems();
+  }, []);
+
+  const handleItemClick = (itemId) => {
+    const selectedItem = items.find(item => item.id === itemId);
+    setSelectedItem(selectedItem);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ItemList items={items} onItemClick={handleItemClick} />
+      {selectedItem && <ItemDetails item={selectedItem} />}
     </div>
   );
-}
+};
 
 export default App;
